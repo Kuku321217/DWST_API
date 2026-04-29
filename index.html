@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DWST_API 620 – Seismic Analysis Calculator</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<meta name="description" content="DWST API 620 Seismic Analysis Calculator - Online Only Version - Requires Active Internet Connection"/>
+<title>DWST_API 620 – Seismic Analysis Calculator (Online Only)</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -363,7 +367,9 @@
   </div>
   <div style="margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
     <span class="ay-badge">Developed by :AY</span>
-    <button class="btn btn-outline" onclick="loadHTML()" title="Load a previously saved .html file" style="border-color:#15803d;color:#4ade80">📂 Load</button>
+    <span style="background: rgba(74,124,255,0.15); color: #4a7cff; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; border: 1px solid rgba(74,124,255,0.3); display: flex; align-items: center; gap: 6px;">
+      <span style="font-size: 14px;">🌐</span> ONLINE ONLY
+    </span>
     <button class="btn btn-word" onclick="exportWord()">📄 Export Word</button>
     <button class="btn btn-pdf"  onclick="exportPDF()">📑 Export PDF</button>
     <button class="btn btn-print" onclick="window.print()">🖨 Print Report</button>
@@ -1783,103 +1789,116 @@ const fmt = (v, d=3) => isNaN(v) || !isFinite(v) ? '—' : v.toFixed(d);
 
 // ─── Save As HTML (preserves ALL user inputs) ─────────────────────────────────────────────────
 // ─── Core serialise-and-download helper ───────────────────────────────────────
+// ─── ⚠️ SERIALIZATION FUNCTION DISABLED ───────────────────────────────────────
+// This function has been removed to prevent local storage of the software
 function _serializeAndDownload(filename) {
-  // Clone the entire live DOM (captures all dynamic innerHTML tables too)
-  const clone = document.documentElement.cloneNode(true);
+  alert('⚠️ This software cannot be saved locally.\n\nPlease ensure you have an active internet connection to use this application.');
+}
 
-  // ── 1. Sync all id-based inputs / selects / textareas ──────────────────────
-  document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
-    const t = clone.querySelector('#' + CSS.escape(el.id));
-    if (!t) return;
-    if (el.type === 'checkbox' || el.type === 'radio') {
-      el.checked ? t.setAttribute('checked','checked') : t.removeAttribute('checked');
-    } else {
-      t.setAttribute('value', el.value);
-    }
-    if (el.tagName === 'SELECT') {
-      t.querySelectorAll('option').forEach((opt, i) => {
-        i === el.selectedIndex
-          ? opt.setAttribute('selected','selected')
-          : opt.removeAttribute('selected');
-      });
-    }
-  });
-
-  // ── 2. Sync course-table inputs (.cw / .cadopt by data-idx) ────────────────
-  ['cw','cadopt'].forEach(cls => {
-    document.querySelectorAll('.' + cls).forEach(el => {
-      const t = clone.querySelector('.' + cls + '[data-idx="' + el.dataset.idx + '"]');
-      if (t) t.setAttribute('value', el.value);
-    });
-  });
-
-  // ── 3. Sync stiffener sizing inputs (ss_field_idx, built dynamically) ──────
-  document.querySelectorAll('[id^="ss_"]').forEach(el => {
-    const t = clone.querySelector('#' + CSS.escape(el.id));
-    if (t) t.setAttribute('value', el.value);
-  });
-
-  // ── 4. Sync top-stiffener T-section inputs (ts_ts / ts_tw / etc.) ──────────
-  ['ts_ts','ts_tw','ts_hw','ts_tf','ts_bf'].forEach(id => {
-    const el = document.getElementById(id);
-    const t  = clone.querySelector('#' + id);
-    if (el && t) t.setAttribute('value', el.value);
-  });
-
-  // ── 5. Trigger-free download using FileSaver (avoids early-revoke bug) ──────
-  const html = '<!DOCTYPE html>\n' + clone.outerHTML;
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-
-  // Use FileSaver.js if available (handles Firefox + cross-browser correctly)
-  if (typeof saveAs === 'function') {
-    saveAs(blob, filename);
-  } else if (typeof window.saveAs === 'function') {
-    window.saveAs(blob, filename);
-  } else {
-    // Fallback: anchor click with delayed revoke so download has time to start
-    const url = URL.createObjectURL(blob);
-    const a   = document.createElement('a');
-    a.href     = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 30000); // revoke after 30 s
+// ─── 🌐 NETWORK CONNECTIVITY CHECK ─────────────────────────────────────────────
+// This software requires an active internet connection to function
+function checkInternetConnection() {
+  // Check if navigator.onLine is false (offline)
+  if (!navigator.onLine) {
+    showNetworkError();
+    return false;
   }
+  
+  // Additional check: try to load a small resource from CDN
+  return fetch('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', {
+    method: 'HEAD',
+    cache: 'no-cache'
+  })
+  .then(response => {
+    if (!response.ok) {
+      showNetworkError();
+      return false;
+    }
+    return true;
+  })
+  .catch(() => {
+    showNetworkError();
+    return false;
+  });
 }
 
-// ─── 💾 Save  – overwrites using the same fixed filename ──────────────────────
+function showNetworkError() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    font-family: 'IBM Plex Sans', sans-serif;
+  `;
+  
+  overlay.innerHTML = `
+    <div style="background: #1e2333; padding: 40px; border-radius: 16px; border: 2px solid #ef4444; max-width: 500px; text-align: center;">
+      <div style="font-size: 64px; margin-bottom: 20px;">🌐</div>
+      <h2 style="color: #ef4444; font-size: 24px; margin-bottom: 16px;">No Internet Connection</h2>
+      <p style="color: #e2e8f0; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+        This software requires an active internet connection to function properly. 
+        Please check your network connection and try again.
+      </p>
+      <button onclick="location.reload()" style="
+        background: #4a7cff;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      " onmouseover="this.style.background='#3a6cef'" onmouseout="this.style.background='#4a7cff'">
+        Retry Connection
+      </button>
+    </div>
+  `;
+  
+  document.body.appendChild(overlay);
+}
+
+// Check connection on page load
+window.addEventListener('load', () => {
+  checkInternetConnection();
+});
+
+// Monitor online/offline status
+window.addEventListener('offline', () => {
+  showNetworkError();
+});
+
+window.addEventListener('online', () => {
+  // Remove error overlay if it exists
+  const overlay = document.querySelector('div[style*="z-index: 10000"]');
+  if (overlay) {
+    overlay.remove();
+  }
+});
+
+// ─── ⚠️ SAVE/LOAD FUNCTIONS DISABLED ───────────────────────────────────────────
+// These functions have been removed to prevent local storage of the software
+// The application must be accessed online only
+
 function saveHTML() {
-  _serializeAndDownload('DWST_API620_Seismic_Calculator.html');
+  alert('⚠️ Save function has been disabled.\n\nThis software cannot be saved locally and must be accessed with an active internet connection.');
 }
 
-// ─── 💾 Save As – prompts browser to rename ───────────────────────────────────
 function saveAsHTML() {
-  // Build a timestamped default name so the browser always shows Save-As dialog
-  const ts = new Date().toISOString().slice(0,16).replace('T','_').replace(':','');
-  _serializeAndDownload('DWST_API620_' + ts + '.html');
+  alert('⚠️ Save function has been disabled.\n\nThis software cannot be saved locally and must be accessed with an active internet connection.');
 }
 
-// ─── 📂 Load – re-open a previously saved .html file ─────────────────────────
 function loadHTML() {
-  const inp = document.createElement('input');
-  inp.type   = 'file';
-  inp.accept = '.html,text/html';
-  inp.onchange = function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-      // Open in same tab – the saved file is self-contained
-      const blob = new Blob([ev.target.result], { type: 'text/html;charset=utf-8' });
-      const url  = URL.createObjectURL(blob);
-      window.location.href = url;
-      // Note: revokeObjectURL not called here – page navigation takes over
-    };
-    reader.readAsText(file);
-  };
-  inp.click();
+  alert('⚠️ Load function has been disabled.\n\nThis software must be accessed with an active internet connection.');
 }
+
 
 // ─── Tab switching ──────────────────────────────────────────────────────────
 function showTab(n) {
@@ -4775,6 +4794,33 @@ computeStiffeners();
 computeCapacity();
 computeWeightSummary();
 computeTankGraphic();
+
+// ─── PREVENT LOCAL SAVE ATTEMPTS ──────────────────────────────────────────────
+// Disable right-click context menu to prevent "Save As"
+document.addEventListener('contextmenu', function(e) {
+  e.preventDefault();
+  alert('⚠️ This software is online-only and cannot be saved locally.\n\nRight-click menu has been disabled.');
+  return false;
+});
+
+// Disable keyboard shortcuts for saving (Ctrl+S / Cmd+S)
+document.addEventListener('keydown', function(e) {
+  // Ctrl+S or Cmd+S
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    alert('⚠️ This software cannot be saved locally.\n\nPlease ensure you have an active internet connection to use this application.');
+    return false;
+  }
+  // Ctrl+Shift+S or Cmd+Shift+S (Save As)
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'S') {
+    e.preventDefault();
+    alert('⚠️ This software cannot be saved locally.\n\nPlease ensure you have an active internet connection to use this application.');
+    return false;
+  }
+});
+
+console.log('%c⚠️ NOTICE: This software is ONLINE-ONLY', 'color: #ef4444; font-size: 16px; font-weight: bold;');
+console.log('%cThis application requires an active internet connection and cannot be saved locally.', 'color: #f59e0b; font-size: 12px;');
 </script>
 </body>
 </html>
