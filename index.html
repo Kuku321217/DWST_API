@@ -906,7 +906,8 @@
     <div class="section-header"><div class="section-num">7</div><h2>5.7 Stiffener Sizing – Required vs Provided Moment of Inertia (EN 1993-4-2)</h2></div>
     <div class="section-body">
       <div class="info-banner" style="margin-bottom:14px">
-        🔧 Enter stiffener location from bottom (mm) and T-section dimensions for each stiffener.
+        🔧 The <strong style="color:var(--accent2)">📐 Auto-Calc Location</strong> column (green, D col) shows the theoretically optimal stiffener position derived automatically from the Shell Course Balance Check (Section 5.6), matching Excel Sheet6 Col D exactly.
+        Enter your <strong style="color:var(--input-clr)">User Input Location</strong> (E col, amber) — typically rounded to the nearest mm — and T-section dimensions for each stiffener.
         Set location = 0 to deactivate a slot. All thickness inputs (t<sub>s</sub>, t<sub>w</sub>, t<sub>f</sub>) are user-defined for moment of inertia calculation.
         The tool computes a<sub>j</sub>, covered range, N<sub>Rj,Ed</sub>, b<sub>eff</sub>, I<sub>req</sub> and I<sub>prov</sub> matching Excel Sheet6 exactly.
       </div>
@@ -941,7 +942,8 @@
           <thead>
             <tr>
               <th rowspan="2" style="min-width:36px">No.</th>
-              <th rowspan="2" style="min-width:100px">✎ Location<br>from btm (mm)<br><small style="color:var(--input-clr)">E col – user input</small></th>
+              <th rowspan="2" style="min-width:110px;background:rgba(0,201,167,0.08);border-left:3px solid var(--accent2)">📐 Auto-Calc<br>Location (mm)<br><small style="color:var(--accent2)">D col – from balance check</small></th>
+              <th rowspan="2" style="min-width:100px">✎ User Input<br>Location (mm)<br><small style="color:var(--input-clr)">E col – user input</small></th>
               <th rowspan="2" style="min-width:90px">✎ t<sub>j</sub> mean<br>(mm)<br><small style="color:var(--input-clr)">F col</small></th>
               <th rowspan="2" style="min-width:80px">a<sub>j</sub><br>(mm)<br><small>G col</small></th>
               <th rowspan="2" style="min-width:90px">a<sub>j</sub>·t<sub>j</sub><br>(mm²)<br><small>H col</small></th>
@@ -3485,6 +3487,62 @@ function computeStiffeners() {
     var v = parseFloat(el.value);
     return isFinite(v) ? v : d;
   }
+  // ── Auto-calculated stiffener locations (Excel Sheet6 col D = J96*10^3, N96*10^3, …)
+  // Implements the balance-check table algorithm (Sheet6 rows 77–96):
+  //   F_row = cumulative W*(tmin/t)^2.5 from top course downward
+  //   For stiffener k (1-based):
+  //     balance_col  = IF(cumEquiv < k*Ls_m, W*(tmin/t)^2.5, cumEquiv - k*Ls_m)
+  //     remain_col   = W*(tmin/t)^2.5 - balance_col
+  //     height_col J = IF(remain<0, 0, IF(remain==0, (t/tmin)^2.5*W, (t/tmin)^2.5*remain))
+  //   SUM(height_col) over all courses = stiffener location in metres × 1000 = mm
+  function calcAutoStiffLocs(coursesArr, tminV, Ls_mm_val, nMax) {
+    // coursesArr: [{w_m, t_mm}] ordered TOP → BOTTOM (as in Excel rows 77-94)
+    // Returns array of auto-calc locations in mm (length nMax, inactive = H_tank_mm)
+    var Ls_m_val = Ls_mm_val / 1000;
+    var result = [];
+    for (var k = 1; k <= nMax; k++) {
+      var cumEquiv = 0;
+      var sumHeight = 0;
+      for (var ci = 0; ci < coursesArr.length; ci++) {
+        var cw = coursesArr[ci].w_m;
+        var ct = coursesArr[ci].t_mm;
+        if (cw <= 0 || ct <= 0) continue;
+        var wEquiv = cw * Math.pow(tminV / ct, 2.5);  // W*(tmin/t)^2.5
+        cumEquiv += wEquiv;
+        var target = k * Ls_m_val;
+        // balance_col (H in Excel): if cumEquiv < target → wEquiv, else cumEquiv - target
+        var balance = cumEquiv < target ? wEquiv : (cumEquiv - target);
+        // remain_col (I in Excel): wEquiv - balance
+        var remain = wEquiv - balance;
+        // height_col (J in Excel): IF(I<0,0, IF(I=0,(t/tmin)^2.5*E, (t/tmin)^2.5*I))
+        //   where E = wEquiv, I = remain
+        //   When remain=0 (full course below stiffener): htContrib=(t/tmin)^2.5*wEquiv = cw (real width)
+        //   When remain>0 (partial course at stiffener): htContrib=(t/tmin)^2.5*remain (real partial)
+        //   When remain<0 (course above stiffener): htContrib=0
+        var htContrib;
+        if (remain < 0) {
+          htContrib = 0;
+        } else if (remain === 0) {
+          htContrib = Math.pow(ct / tminV, 2.5) * wEquiv;  // = cw (real course width)
+        } else {
+          htContrib = Math.pow(ct / tminV, 2.5) * remain;
+        }
+        sumHeight += htContrib;
+      }
+      // sumHeight in metres → mm
+      result.push(sumHeight * 1000);
+    }
+    return result;
+  }
+
+  // Build courses array TOP → BOTTOM from the widths/thicknesses already parsed
+  // widths[] and adopted[] run top-to-bottom by construction (same order as thickness table)
+  var coursesForAutoLoc = [];
+  for (var ci2 = 0; ci2 < widths.length; ci2++) {
+    coursesForAutoLoc.push({ w_m: widths[ci2], t_mm: adopted[ci2] || tmin });
+  }
+  var autoLocs = calcAutoStiffLocs(coursesForAutoLoc, tmin, Ls_mm, NMAX);
+
   var sAll = [];
   for (var i=0; i<NMAX; i++) {
     var def = S_DEF[i];
@@ -3643,9 +3701,20 @@ function computeStiffeners() {
       var tr = document.createElement('tr');
       if (!isA) tr.style.opacity = '0.38';
 
+      // Auto-calc location for this slot (Excel col D = balance-check table result)
+      var autoLocVal = (autoLocs && autoLocs[i] !== undefined) ? autoLocs[i] : null;
+      var autoLocOk  = autoLocVal !== null && autoLocVal > 0 && autoLocVal < H_tank_mm + 1;
+      var autoLocDisplay = autoLocOk ? autoLocVal.toFixed(1) : '—';
+      // Warn if user input differs from auto-calc by > 10mm
+      var autoLocColor = 'var(--accent2)';
+      if (isA && autoLocOk && Math.abs(autoLocVal - d.loc) > 10) autoLocColor = 'var(--warn)';
+
       tr.innerHTML =
         '<td style="text-align:center;font-weight:700;color:var(--accent)">'+(i+1)+'</td>'
-        +'<td>'+mkI('loc',i,d.loc,1,'Location from bottom (mm). Set 0 to deactivate.')+'</td>'
+        +'<td style="text-align:right;font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:13px;'
+        +'background:rgba(0,201,167,0.08);border-left:3px solid var(--accent2);'
+        +'color:'+autoLocColor+'" title="Auto-calculated stiffener location from Shell Course Balance Check (Excel Sheet6 col D)">'+autoLocDisplay+'</td>'
+        +'<td>'+mkI('loc',i,d.loc,1,'User input location from bottom (mm). Set 0 to deactivate. Auto-calc shown in green column to the left.')+'</td>'
         +'<td>'+mkI('tj',i,d.tj,0.001,'Mean shell thickness at stiffener location tj (mm) – col F')+'</td>'
         +cvCell(aj_v)
         +cvCell(ajtj_v)
