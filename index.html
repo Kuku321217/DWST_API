@@ -165,10 +165,16 @@
     font-family  : 'IBM Plex Mono', monospace !important;
     font-weight  : 500 !important;
     transition   : box-shadow .15s;
+    pointer-events: auto !important;
+    cursor: text !important;
   }
   #stiffSizingTable input[type="number"]:focus {
     outline   : none;
     box-shadow: 0 0 0 2px rgba(245,166,35,0.2) !important;
+  }
+  /* Ensure table cells containing inputs are clickable */
+  #stiffSizingTable td {
+    pointer-events: auto !important;
   }
 
   /* Legend strip shown once at top of each section-body that has inputs */
@@ -910,6 +916,10 @@
         Enter your <strong style="color:var(--input-clr)">User Input Location</strong> (E col, amber) — typically rounded to the nearest mm — and T-section dimensions for each stiffener.
         Set location = 0 to deactivate a slot. All thickness inputs (t<sub>s</sub>, t<sub>w</sub>, t<sub>f</sub>) are user-defined for moment of inertia calculation.
         The tool computes a<sub>j</sub>, covered range, N<sub>Rj,Ed</sub>, b<sub>eff</sub>, I<sub>req</sub> and I<sub>prov</sub> matching Excel Sheet6 exactly.
+        <button onclick="sessionStorage.removeItem('stiffener_inputs_v1'); computeStiffeners(); alert('Stiffener data cleared!');" 
+                style="margin-left:10px;padding:4px 12px;background:#e74c3c;color:white;border:none;border-radius:4px;cursor:pointer;font-size:11px">
+          🗑️ Clear Saved Data
+        </button>
       </div>
 
       <!-- Summary KPIs -->
@@ -3464,6 +3474,45 @@ function computeStiffeners() {
   var E_Nm2_ss  = E_mpa * 1e6;      // MPa → N/m²
 
   // Default geometry per Excel (11 slots)
+  // ── PRESERVE USER INPUTS USING SESSION STORAGE ──
+  // Save any existing DOM inputs to sessionStorage before regeneration
+  var sessionKey = 'stiffener_inputs_v1';
+  var preservedInputs = {};
+  
+  // Try to load from sessionStorage first
+  try {
+    var stored = sessionStorage.getItem(sessionKey);
+    if (stored) {
+      preservedInputs = JSON.parse(stored);
+    }
+  } catch(e) {}
+  
+  // Update with current DOM values (overwrite storage with latest user input)
+  for (var pi = 0; pi < 20; pi++) {
+    var fields = ['loc', 'tj', 'ts', 'tw', 'hw', 'tf', 'bf'];
+    fields.forEach(function(field) {
+      var el = document.getElementById('ss_' + field + '_' + pi);
+      if (el && el.value !== '') {
+        if (!preservedInputs[pi]) preservedInputs[pi] = {};
+        preservedInputs[pi][field] = parseFloat(el.value);
+      }
+    });
+  }
+  
+  // Save back to sessionStorage
+  try {
+    sessionStorage.setItem(sessionKey, JSON.stringify(preservedInputs));
+  } catch(e) {}
+
+  // Calculate number of stiffeners required BEFORE setting up the table
+  // This is done early so NMAX can be set dynamically
+  const Ls_m_early = Ls_mm / 1000;
+  const N_stiff_calc = Math.max(0, Math.ceil(H_eq / Ls_m_early - 1));
+  
+  // Set NMAX dynamically: use calculated required stiffeners + 2 buffer, min 3, max 20
+  // This ensures the table shows enough rows for the actual design case
+  var NMAX = Math.max(3, Math.min(20, N_stiff_calc + 2));
+
   var S_DEF = [
   //  loc,    tj,     ts,   tw,  hw,  tf,  bf
     [6998,  12.707, 16,   14,  700, 14,  230],
@@ -3477,11 +3526,30 @@ function computeStiffeners() {
     [0,     8,      10,   10,  180, 10,  50 ],
     [0,     8,      10,   10,  180, 10,  50 ],
     [0,     8,      10,   10,  180, 10,  50 ],
+    [0,     8,      10,   10,  180, 10,  50 ],
+    [0,     8,      10,   10,  180, 10,  50 ],
+    [0,     8,      10,   10,  180, 10,  50 ],
+    [0,     8,      10,   10,  180, 10,  50 ],
+    [0,     8,      10,   10,  180, 10,  50 ],
+    [0,     8,      10,   10,  180, 10,  50 ],
+    [0,     8,      10,   10,  180, 10,  50 ],
+    [0,     8,      10,   10,  180, 10,  50 ],
+    [0,     8,      10,   10,  180, 10,  50 ],
   ];
-  var NMAX = 11;
+  
+  // Extend S_DEF if NMAX exceeds default array length
+  while (S_DEF.length < NMAX) {
+    S_DEF.push([0, 8, 10, 10, 180, 10, 50]);
+  }
 
   // Read all user inputs from DOM (inputs are rendered into the table rows)
+  // Now checks preserved inputs first, then DOM, then defaults
   function gSI(f, i, d) {
+    // First check preserved inputs
+    if (preservedInputs[i] && preservedInputs[i][f] !== undefined) {
+      return preservedInputs[i][f];
+    }
+    // Then check DOM
     var el = document.getElementById('ss_'+f+'_'+i);
     if (!el) return d;
     var v = parseFloat(el.value);
@@ -3662,7 +3730,8 @@ function computeStiffeners() {
         +' style="width:72px;font-size:11.5px;padding:4px 6px;text-align:center;'
         +'background:var(--input-bg);border:1px solid var(--input-border);'
         +'border-left:3px solid var(--input-clr);border-radius:4px;'
-        +'color:var(--input-clr);font-family:\'IBM Plex Mono\',monospace;font-weight:500;"'
+        +'color:var(--input-clr);font-family:\'IBM Plex Mono\',monospace;font-weight:500;'
+        +'pointer-events:auto;cursor:text;"'
         +' oninput="computeStiffeners()"/>';
     }
     // Teal computed cell value
@@ -3714,18 +3783,18 @@ function computeStiffeners() {
         +'<td style="text-align:right;font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:13px;'
         +'background:rgba(0,201,167,0.08);border-left:3px solid var(--accent2);'
         +'color:'+autoLocColor+'" title="Auto-calculated stiffener location from Shell Course Balance Check (Excel Sheet6 col D)">'+autoLocDisplay+'</td>'
-        +'<td>'+mkI('loc',i,d.loc,1,'User input location from bottom (mm). Set 0 to deactivate. Auto-calc shown in green column to the left.')+'</td>'
-        +'<td>'+mkI('tj',i,d.tj,0.001,'Mean shell thickness at stiffener location tj (mm) – col F')+'</td>'
+        +'<td style="pointer-events:auto">'+mkI('loc',i,d.loc,1,'User input location from bottom (mm). Set 0 to deactivate. Auto-calc shown in green column to the left.')+'</td>'
+        +'<td style="pointer-events:auto">'+mkI('tj',i,d.tj,0.001,'Mean shell thickness at stiffener location tj (mm) – col F')+'</td>'
         +cvCell(aj_v)
         +cvCell(ajtj_v)
         +'<td style="text-align:right;font-family:\'IBM Plex Mono\',monospace;color:var(--warn);font-size:12px">'+cov_v+'</td>'
         +'<td style="text-align:right;font-family:\'IBM Plex Mono\',monospace;color:var(--warn);font-weight:600;font-size:12px">'+NR_v+'</td>'
-        +'<td style="background:rgba(74,124,255,0.04)">'+mkI('ts',i,d.ts,0.1,'Shell plate thickness ts (mm) – col L – used for beff and Ifinal')+'</td>'
+        +'<td style="background:rgba(74,124,255,0.04);pointer-events:auto">'+mkI('ts',i,d.ts,0.1,'Shell plate thickness ts (mm) – col L – used for beff and Ifinal')+'</td>'
         +'<td style="text-align:right;font-family:\'IBM Plex Mono\',monospace;color:var(--accent);font-size:12px;background:rgba(74,124,255,0.04)">'+beff_v+'</td>'
-        +'<td style="background:rgba(245,166,35,0.04)">'+mkI('tw',i,d.tw,0.1,'Web thickness tw (mm) – col N')+'</td>'
-        +'<td style="background:rgba(245,166,35,0.04)">'+mkI('hw',i,d.hw,1,'Web height hw (mm) – col O')+'</td>'
-        +'<td style="background:rgba(0,201,167,0.04)">'+mkI('tf',i,d.tf,0.1,'Flange thickness tf (mm) – col P')+'</td>'
-        +'<td style="background:rgba(0,201,167,0.04)">'+mkI('bf',i,d.bf,1,'Flange width bf (mm) – col Q')+'</td>'
+        +'<td style="background:rgba(245,166,35,0.04);pointer-events:auto">'+mkI('tw',i,d.tw,0.1,'Web thickness tw (mm) – col N')+'</td>'
+        +'<td style="background:rgba(245,166,35,0.04);pointer-events:auto">'+mkI('hw',i,d.hw,1,'Web height hw (mm) – col O')+'</td>'
+        +'<td style="background:rgba(0,201,167,0.04);pointer-events:auto">'+mkI('tf',i,d.tf,0.1,'Flange thickness tf (mm) – col P')+'</td>'
+        +'<td style="background:rgba(0,201,167,0.04);pointer-events:auto">'+mkI('bf',i,d.bf,1,'Flange width bf (mm) – col Q')+'</td>'
         +'<td style="text-align:right;font-family:\'IBM Plex Mono\',monospace;color:var(--accent2);font-size:12px">'+Ireq_v+'</td>'
         +'<td style="text-align:right;font-family:\'IBM Plex Mono\',monospace;color:'+IprovColor+';font-weight:700;font-size:12px">'+Iprov_v+'</td>'
         +cvCell(wt_v)
