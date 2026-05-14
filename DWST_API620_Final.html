@@ -7,7 +7,10 @@
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
 <meta name="description" content="DWST API 620 Seismic Analysis Calculator - Online Only Version - Requires Active Internet Connection"/>
-<title>DWST_API 620 – Seismic Analysis Calculator (Online Only)</title>
+<meta name="author" content="Developed by: AY"/>
+<meta name="developer" content="AY"/>
+<meta name="copyright" content="Developed by: AY - All Rights Reserved"/>
+<title>DWST_API 620 – Seismic Analysis Calculator (Online Only) - Developed by: AY</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -30,6 +33,38 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.6; }
+
+  /* ═══ WATERMARK - DEVELOPED BY: AY ═══ */
+  body::before {
+    content: "Developed by: AY";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 120px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.015);
+    z-index: -1;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: 20px;
+    white-space: nowrap;
+  }
+  body::after {
+    content: "© AY";
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.2);
+    z-index: 999998;
+    pointer-events: none;
+    user-select: none;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
 
   /* ── Header ── */
   header { background: linear-gradient(135deg, #0f1117 0%, #1a2040 100%); border-bottom: 1px solid var(--border); padding: 18px 32px; display: flex; align-items: center; gap: 16px; }
@@ -401,12 +436,13 @@
   <div class="tab active" onclick="showTab(0)">1. General Information</div>
   <div class="tab" onclick="showTab(1)">2. Shell Thickness</div>
   <div class="tab" onclick="showTab(2)">3. Seismic Analysis</div>
-  <div class="tab" onclick="showTab(3)">4. External Pressure</div>
-  <div class="tab" onclick="showTab(4)">5. Stiffeners (EN 1993-1-6)</div>
-  <div class="tab" onclick="showTab(5)">6. Formulae Reference</div>
-  <div class="tab" onclick="showTab(6)">1A. Capacity Check</div>
-  <div class="tab" onclick="showTab(7)">7. Weight Summary</div>
-  <div class="tab" onclick="showTab(8)">📐 Tank Graphic</div>
+  <div class="tab" onclick="showTab(3)">3A. Anchor & Uplift</div>
+  <div class="tab" onclick="showTab(4)">4. External Pressure</div>
+  <div class="tab" onclick="showTab(5)">5. Stiffeners (EN 1993-1-6)</div>
+  <div class="tab" onclick="showTab(6)">6. Formulae Reference</div>
+  <div class="tab" onclick="showTab(7)">1A. Capacity Check</div>
+  <div class="tab" onclick="showTab(8)">7. Weight Summary</div>
+  <div class="tab" onclick="showTab(9)">📐 Tank Graphic</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -603,6 +639,46 @@
   </div>
 
   <div class="section">
+    <div class="section-header"><div class="section-num">A</div><h2>3A. Key Seismic Output Values (Auto-Calculated)</h2></div>
+    <div class="section-body">
+      <div class="info-banner" style="margin-bottom:14px">
+        🔗 These values are automatically calculated from the seismic analysis and used in anchorage checks.
+      </div>
+      <table class="result-table">
+        <thead><tr><th>Parameter</th><th>Symbol</th><th>OLE Value</th><th>CLE Value</th><th>Unit</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="label">Seismic Ringwall Moment</td>
+            <td class="sym">M<sub>rw</sub></td>
+            <td class="value" style="color:var(--accent2)"><span id="calc_Mrw_OLE">—</span></td>
+            <td class="value" style="color:var(--accent2)"><span id="calc_Mrw_CLE">—</span></td>
+            <td>N·m</td>
+          </tr>
+          <tr>
+            <td class="label">Seismic Base Shear</td>
+            <td class="sym">V</td>
+            <td class="value" style="color:var(--accent2)"><span id="calc_V_OLE">—</span></td>
+            <td class="value" style="color:var(--accent2)"><span id="calc_V_CLE">—</span></td>
+            <td>N</td>
+          </tr>
+          <tr>
+            <td class="label">Anchorage Ratio</td>
+            <td class="sym">J</td>
+            <td class="value" style="color:var(--accent2)" colspan="2"><span id="calc_J">—</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="label">Resisting Force on Annulus</td>
+            <td class="sym">w<sub>a</sub></td>
+            <td class="value" style="color:var(--accent2)" colspan="2"><span id="calc_wa">—</span></td>
+            <td>N/m</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
     <div class="section-header"><div class="section-num">3</div><h2>3.3 Shell Compression Check (API-620 E.6.2.2.2)</h2></div>
     <div class="section-body">
       <table class="result-table" id="compressionTable">
@@ -668,6 +744,232 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  PAGE 3A – ANCHOR & UPLIFT LOAD CASES (4_Anchor sheet)         -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page3a">
+  
+  <!-- Anchorage Requirements -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">1</div><h2>4A.1 Anchorage Requirements (API-620 Table 5.7)</h2></div>
+    <div class="section-body">
+      <div class="info-banner" style="margin-bottom:14px">
+        Based on API-620 Appendix Q Table 5.7 uplift load cases. Anchorage is required when uplift exceeds self-weight resistance.
+      </div>
+      <div class="grid-4">
+        <div class="field"><label>Anchorage Required</label>
+          <select id="anc_required" onchange="computeAnchor()">
+            <option value="YES">YES - Mechanically Anchored</option>
+            <option value="NO">NO - Self Anchored</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Anchor Strap Parameters -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">2</div><h2>4A.2 Anchor Strap Parameters</h2></div>
+    <div class="section-body">
+      <div class="info-banner" style="margin-bottom:14px">
+        Configure anchor strap dimensions and properties. Only applicable when anchorage is required.
+      </div>
+      <div class="grid-4">
+        <div class="field"><label>Anchor Strap Width</label><input id="anc_width" type="number" step="1" value="120" oninput="computeAnchor()"/><span class="unit">mm</span></div>
+        <div class="field"><label>Anchor Strap Thickness</label><input id="anc_thickness" type="number" step="1" value="16" oninput="computeAnchor()"/><span class="unit">mm</span></div>
+        <div class="field"><label>Number of Straps</label><input id="anc_number" type="number" step="1" value="144" oninput="computeAnchor()"/></div>
+        <div class="field"><label>Anchor Strap BCD</label><input id="anc_bcd" type="number" step="100" value="45500" oninput="computeAnchor()"/><span class="unit">mm</span></div>
+      </div>
+      <div class="divider"></div>
+      <table class="result-table">
+        <thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Formula</th></tr></thead>
+        <tbody>
+          <tr><td class="label">Spacing</td><td class="value"><span id="anc_res_spacing">—</span></td><td>mm</td><td>π × BCD / Number of Straps</td></tr>
+          <tr><td class="label">Corroded Area per Strap</td><td class="value"><span id="anc_res_area">—</span></td><td>mm²</td><td>Width × Thickness</td></tr>
+          <tr><td class="label">Weight of Anchor Straps</td><td class="value"><span id="anc_res_weight">—</span></td><td>kg</td><td>π × BCD × Width × Thickness × ρ × 10⁻⁹</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Uplift Load Cases -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">3</div><h2>4A.3 Uplift Load Cases (API-620 Table 5.7)</h2></div>
+    <div class="section-body">
+      <div class="info-banner" style="margin-bottom:14px">
+        Eight uplift load cases per API-620 Table 5.7. All calculations based on seismic moments and weights from previous sections.
+      </div>
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>Case</th>
+            <th>Load Condition</th>
+            <th>Net Uplift (kg)</th>
+            <th>Allowable Stress (MPa)</th>
+            <th>Induced Stress (MPa)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Design Pressure</td>
+            <td class="value"><span id="anc_uplift_1">—</span></td>
+            <td class="value"><span id="anc_allow_1">—</span></td>
+            <td class="value"><span id="anc_induced_1">—</span></td>
+            <td><span id="anc_status_1" class="badge">—</span></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Test Pressure</td>
+            <td class="value"><span id="anc_uplift_2">—</span></td>
+            <td class="value"><span id="anc_allow_2">—</span></td>
+            <td class="value"><span id="anc_induced_2">—</span></td>
+            <td><span id="anc_status_2" class="badge">—</span></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Wind Load</td>
+            <td class="value"><span id="anc_uplift_3">—</span></td>
+            <td class="value"><span id="anc_allow_3">—</span></td>
+            <td class="value"><span id="anc_induced_3">—</span></td>
+            <td><span id="anc_status_3" class="badge">—</span></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Seismic Load (OLE)</td>
+            <td class="value"><span id="anc_uplift_4">—</span></td>
+            <td class="value"><span id="anc_allow_4">—</span></td>
+            <td class="value"><span id="anc_induced_4">—</span></td>
+            <td><span id="anc_status_4" class="badge">—</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Seismic Load (CLE)</td>
+            <td class="value"><span id="anc_uplift_5">—</span></td>
+            <td class="value"><span id="anc_allow_5">—</span></td>
+            <td class="value"><span id="anc_induced_5">—</span></td>
+            <td><span id="anc_status_5" class="badge">—</span></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Design Pressure + Wind</td>
+            <td class="value"><span id="anc_uplift_6">—</span></td>
+            <td class="value"><span id="anc_allow_6">—</span></td>
+            <td class="value"><span id="anc_induced_6">—</span></td>
+            <td><span id="anc_status_6" class="badge">—</span></td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Design Pressure + Seismic (OLE)</td>
+            <td class="value"><span id="anc_uplift_7">—</span></td>
+            <td class="value"><span id="anc_allow_7">—</span></td>
+            <td class="value"><span id="anc_induced_7">—</span></td>
+            <td><span id="anc_status_7" class="badge">—</span></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>Design Pressure + Seismic (CLE)</td>
+            <td class="value"><span id="anc_uplift_8">—</span></td>
+            <td class="value"><span id="anc_allow_8">—</span></td>
+            <td class="value"><span id="anc_induced_8">—</span></td>
+            <td><span id="anc_status_8" class="badge">—</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="divider"></div>
+      <div class="grid-4">
+        <div class="field"><label>Maximum Uplift Load</label><input id="anc_max_uplift" type="text" readonly/><span class="unit">kg</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Counter Balancing Weight -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">4</div><h2>4A.4 Counter Balancing Weight Requirements</h2></div>
+    <div class="section-body">
+      <div class="info-banner" style="margin-bottom:14px">
+        Counter balancing weight required per API-620 Section 2.13 for different load conditions.
+      </div>
+      <h3 style="margin:18px 0 12px;font-size:13px;font-weight:600;color:var(--accent2)">From Seismic (OLE)</h3>
+      <table class="result-table">
+        <tbody>
+          <tr><td class="label">Design Pressure</td><td class="value"><span id="anc_cb_des">—</span></td><td>T</td></tr>
+          <tr><td class="label">Operating Pressure</td><td class="value"><span id="anc_cb_op">—</span></td><td>T</td></tr>
+          <tr><td class="label">Test Pressure</td><td class="value"><span id="anc_cb_test">—</span></td><td>T</td></tr>
+          <tr><td class="label">Wind Load</td><td class="value"><span id="anc_cb_wind">—</span></td><td>T</td></tr>
+          <tr><td class="label">Pressure + Wind</td><td class="value"><span id="anc_cb_pwind">—</span></td><td>T</td></tr>
+          <tr><td class="label">Seismic Load (OLE)</td><td class="value"><span id="anc_cb_seisole">—</span></td><td>T</td></tr>
+          <tr><td class="label">Pressure + Seismic (OLE)</td><td class="value"><span id="anc_cb_pseisole">—</span></td><td>T</td></tr>
+          <tr style="background:rgba(0,201,167,0.12);font-weight:700">
+            <td class="label">Counter Balancing Weight Required (OLE)</td>
+            <td class="value" style="color:var(--accent2)"><span id="anc_cb_req_ole">—</span></td>
+            <td>T</td>
+          </tr>
+          <tr>
+            <td class="label">Max. Uplift Force per Unit Length (OLE)</td>
+            <td class="value"><span id="anc_uplift_unit_ole">—</span></td>
+            <td>T/mm</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin:18px 0 12px;font-size:13px;font-weight:600;color:var(--accent2)">From Seismic (CLE)</h3>
+      <table class="result-table">
+        <tbody>
+          <tr><td class="label">Seismic Load (CLE)</td><td class="value"><span id="anc_cb_seiscle">—</span></td><td>T</td></tr>
+          <tr><td class="label">Pressure + Seismic (CLE)</td><td class="value"><span id="anc_cb_pseiscle">—</span></td><td>T</td></tr>
+          <tr style="background:rgba(0,201,167,0.12);font-weight:700">
+            <td class="label">Counter Balancing Weight Required (CLE)</td>
+            <td class="value" style="color:var(--accent2)"><span id="anc_cb_req_cle">—</span></td>
+            <td>T</td>
+          </tr>
+          <tr>
+            <td class="label">Max. Uplift Force per Unit Length (CLE)</td>
+            <td class="value"><span id="anc_uplift_unit_cle">—</span></td>
+            <td>T/mm</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Variable Definitions -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">5</div><h2>4A.5 Variable Definitions (API-620 Table 5.7)</h2></div>
+    <div class="section-body">
+      <table class="result-table">
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>W₁</strong></td><td>Corroded weight of roof plates + shell + permanent attachments (lbf)</td></tr>
+          <tr><td><strong>W₂</strong></td><td>Corroded weight of shell + permanent attachments + portion of roof acting on shell (lbf)</td></tr>
+          <tr><td><strong>W₃</strong></td><td>Nominal weight of roof plates + shell + permanent attachments (lbf)</td></tr>
+          <tr><td><strong>Av</strong></td><td>Vertical earthquake acceleration coefficient (% g)</td></tr>
+          <tr><td><strong>D</strong></td><td>Tank diameter (feet)</td></tr>
+          <tr><td><strong>Fp</strong></td><td>Pressure combination factor (min 0.7)</td></tr>
+          <tr><td><strong>Fty</strong></td><td>Minimum yield strength of bottom shell course (psi)</td></tr>
+          <tr><td><strong>Fy</strong></td><td>Minimum yield strength of anchor bolt (limited to 55,000 psi)</td></tr>
+          <tr><td><strong>H</strong></td><td>Tank height (feet)</td></tr>
+          <tr><td><strong>MWS</strong></td><td>Wind moment = PWS × D × H²/2 (ft-lbs)</td></tr>
+          <tr><td><strong>Mrw</strong></td><td>Seismic moment (ft-lbs, see Equation L-2)</td></tr>
+          <tr><td><strong>Pi</strong></td><td>Design internal pressure (inches water column)</td></tr>
+          <tr><td><strong>Pt</strong></td><td>Test pressure (inches water column)</td></tr>
+          <tr><td><strong>PWR</strong></td><td>Wind uplift pressure on roof (inches water column)</td></tr>
+          <tr><td><strong>PWS</strong></td><td>Wind pressure on shell (lbs/ft²)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn btn-outline" onclick="showTab(2)">← Seismic Analysis</button>
+    <button class="btn btn-primary" onclick="showTab(4)">Next: External Pressure →</button>
+  </div>
+
+</div>
+
+
 <!--  PAGE 4 – EXTERNAL PRESSURE (5_External Pressure sheet)        -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <div class="page" id="page3">
@@ -1919,11 +2221,12 @@ function showTab(n) {
   if (n===0) computeGeneral();
   if (n===1) computeThickness();
   if (n===2) computeSeismic();
-  if (n===3) computeExtPressure();
-  if (n===4) computeStiffeners();
-  if (n===6) computeCapacity();
-  if (n===7) computeWeightSummary();
-  if (n===8) computeTankGraphic();
+  if (n===3) computeAnchor();
+  if (n===4) computeExtPressure();
+  if (n===5) computeStiffeners();
+  if (n===7) computeCapacity();
+  if (n===8) computeWeightSummary();
+  if (n===9) computeTankGraphic();
 }
 
 // ─── PDF Export ──────────────────────────────────────────────────────────────
@@ -2987,6 +3290,55 @@ function computeSeismic() {
   computeHoopForces("hoopBody",    D, Hd, rho/1000, Ai_OLE, Ac_OLE, Av_OLE);
   computeHoopForces("hoopCLEBody", D, Hd, rho/1000, Ai_CLE, Ac_CLE, Av_CLE);
 
+  // Update autocalculated display fields (section 3A values)
+  const setCalcVal = (id, val, decimals=2) => {
+    const el = document.getElementById(id);
+    if (el) {
+      if (isNaN(val) || !isFinite(val)) {
+        el.textContent = '—';
+      } else {
+        // For very large numbers, use scientific notation or formatted display
+        if (Math.abs(val) >= 1e6) {
+          el.textContent = val.toExponential(decimals);
+        } else {
+          el.textContent = val.toFixed(decimals);
+        }
+      }
+    }
+  };
+  
+  // Key seismic output values - use N·m for Mrw as returned by computeCase
+  setCalcVal('calc_Mrw_OLE', OLE.Mrw, 2);  // N·m
+  setCalcVal('calc_Mrw_CLE', CLE.Mrw, 2);  // N·m
+  setCalcVal('calc_V_OLE', OLE.V, 2);      // N
+  setCalcVal('calc_V_CLE', CLE.V, 2);      // N
+  setCalcVal('calc_J', OLE.J, 4);          // Dimensionless (using OLE value)
+  setCalcVal('calc_wa', OLE.wa, 2);        // N/m (using OLE value)
+
+  // Store results globally for use by computeAnchor() function
+  // Convert Mrw from N·m to ft-lb for anchor calculations
+  window.seismicResults = {
+    OLE: {
+      Mrw: OLE.Mrw,           // N·m
+      Mrw_ftlb: OLE.Mrw / 1.3558179,  // Convert N·m to ft-lb
+      V: OLE.V,
+      J: OLE.J,
+      wa: OLE.wa
+    },
+    CLE: {
+      Mrw: CLE.Mrw,           // N·m
+      Mrw_ftlb: CLE.Mrw / 1.3558179,  // Convert N·m to ft-lb
+      V: CLE.V,
+      J: CLE.J,
+      wa: CLE.wa
+    }
+  };
+
+  // Trigger anchor calculations after seismic results are stored
+  if (typeof computeAnchor === 'function') {
+    computeAnchor();
+  }
+
   // refresh Tank Graphic if visible
   if (document.getElementById('page8') && document.getElementById('page8').classList.contains('active')) { computeTankGraphic(); }
 }
@@ -3059,6 +3411,183 @@ function computeHoopForces(tbodyId, D, Hd, SG_val, Ai, Ac, Av) {
   }
   document.getElementById(tbodyId).innerHTML = tbody;
 }
+
+
+// ─── PAGE 3A: Anchor & Uplift Load Cases ─────────────────────────────────────
+function computeAnchor() {
+  // ── Get input parameters ──
+  const ancReq = document.getElementById('anc_required')?.value || 'YES';
+  const width_mm = g('anc_width') || 120;
+  const thick_mm = g('anc_thickness') || 16;
+  const numStraps = g('anc_number') || 144;
+  const bcd_mm = g('anc_bcd') || 45500;
+  
+  const rhoSteel = 7850; // kg/m³
+  
+  // ── Basic calculations ──
+  const spacing = (Math.PI * bcd_mm) / numStraps;
+  const area = width_mm * thick_mm;
+  const weight = Math.PI * bcd_mm * width_mm * thick_mm * rhoSteel * 1e-9;
+  
+  document.getElementById('anc_res_spacing').textContent = fmt(spacing, 2);
+  document.getElementById('anc_res_area').textContent = fmt(area, 1);
+  document.getElementById('anc_res_weight').textContent = fmt(weight, 2);
+  
+  // ── Get data from other sections ──
+  const D_mm = g('D_mm') || 45000;
+  const H_mm = g('H_mm') || 18500;
+  const D_m = D_mm / 1000;
+  const H_m = H_mm / 1000;
+  const D_ft = D_m * 3.28084;
+  const H_ft = H_m * 3.28084;
+  
+  const Pi = g('Pi_mbarg') || 0;
+  const Pt = g('Pt_mbarg') || 0;
+  const Av = g('s_Av_OLE') || 0.35;  // Use OLE vertical acceleration
+  
+  let Mrw_OLE = 0, Mrw_CLE = 0;
+  if (window.seismicResults) {
+    Mrw_OLE = window.seismicResults.OLE?.Mrw_ftlb || 0;
+    Mrw_CLE = window.seismicResults.CLE?.Mrw_ftlb || 0;
+  }
+  
+  if (Mrw_OLE === 0 || Mrw_CLE === 0) {
+    // Use default values if seismic hasn't been calculated yet
+    const approxMrw = 50000000;
+    Mrw_OLE = approxMrw;
+    Mrw_CLE = approxMrw * 1.23;
+  }
+  
+  // ── Weights ──
+  // Get total tank weight from Tab 7 Weight Summary
+  const grandTotalText = document.getElementById('ws_grand')?.textContent || '500000';
+  const estimatedWeight_kg = parseFloat(grandTotalText.replace(/,/g, '')) || 500000;
+  
+  const W1_lbf = estimatedWeight_kg * 2.20462;  // Operating weight
+  const W2_lbf = W1_lbf * 0.9;   // Empty weight (90% of operating)
+  const W3_lbf = W1_lbf * 1.05;  // Test weight (105% of operating)
+  const Fp = 0.7;  // Load factor for pressure
+  
+  // ── Calculate uplift loads ──
+  const uplift1_lbf = Pi * Math.pow(D_ft, 2) * 4.08 - W1_lbf;
+  const uplift1 = Math.max(0, uplift1_lbf * 0.453592);
+  
+  const uplift2_lbf = Pt * Math.pow(D_ft, 2) * 4.08 - W3_lbf;
+  const uplift2 = Math.max(0, uplift2_lbf * 0.453592);
+  
+  const uplift3 = uplift1;
+  
+  const uplift4_lbf = (4 * Mrw_OLE / D_ft) - W2_lbf * (1 - 0.4 * Av);
+  const uplift4 = Math.max(0, uplift4_lbf * 0.453592);
+  
+  const uplift5_lbf = (4 * Mrw_CLE / D_ft) - W2_lbf * (1 - 0.4 * Av);
+  const uplift5 = Math.max(0, uplift5_lbf * 0.453592);
+  
+  const uplift6_lbf = Fp * Pi * Math.pow(D_ft, 2) * 4.08 - W1_lbf;
+  const uplift6 = Math.max(0, uplift6_lbf * 0.453592);
+  
+  const uplift7_lbf = (Fp * Pi * Math.pow(D_ft, 2) * 4.08) + (4 * Mrw_OLE / D_ft) - W1_lbf * (1 - 0.4 * Av);
+  const uplift7 = Math.max(0, uplift7_lbf * 0.453592);
+  
+  const uplift8_lbf = (Fp * Pi * Math.pow(D_ft, 2) * 4.08) + (4 * Mrw_CLE / D_ft) - W1_lbf * (1 - 0.4 * Av);
+  const uplift8 = Math.max(0, uplift8_lbf * 0.453592);
+  
+  // ── Stresses ──
+  const Fty = 250;
+  const allow1 = 0.66 * Fty;
+  const allow2 = 0.88 * Fty;
+  const allow3 = 0.9 * Fty;
+  const allow4 = 0.9 * Fty;
+  
+  const calcInduced = (uplift_kg) => {
+    if (numStraps === 0 || area === 0) return 0;
+    const force_N = (uplift_kg / numStraps) * 9.81;
+    return force_N / area;
+  };
+  
+  const induced1 = calcInduced(uplift1);
+  const induced2 = calcInduced(uplift2);
+  const induced3 = calcInduced(uplift3);
+  const induced4 = calcInduced(uplift4);
+  const induced5 = calcInduced(uplift5);
+  const induced6 = calcInduced(uplift6);
+  const induced7 = calcInduced(uplift7);
+  const induced8 = calcInduced(uplift8);
+  
+  // ── Display results ──
+  const cases = [
+    {uplift: uplift1, allow: allow1, induced: induced1},
+    {uplift: uplift2, allow: allow2, induced: induced2},
+    {uplift: uplift3, allow: allow3, induced: induced3},
+    {uplift: uplift4, allow: allow4, induced: induced4},
+    {uplift: uplift5, allow: allow4, induced: induced5},
+    {uplift: uplift6, allow: allow3, induced: induced6},
+    {uplift: uplift7, allow: allow4, induced: induced7},
+    {uplift: uplift8, allow: allow4, induced: induced8},
+  ];
+  
+  let maxUplift = 0;
+  cases.forEach((c, i) => {
+    const idx = i + 1;
+    const elUplift = document.getElementById(`anc_uplift_${idx}`);
+    const elAllow = document.getElementById(`anc_allow_${idx}`);
+    const elInduced = document.getElementById(`anc_induced_${idx}`);
+    const elStatus = document.getElementById(`anc_status_${idx}`);
+    
+    if (elUplift) elUplift.textContent = fmt(c.uplift, 1);
+    if (elAllow) elAllow.textContent = fmt(c.allow, 2);
+    if (elInduced) elInduced.textContent = fmt(c.induced, 2);
+    
+    const status = c.induced < c.allow ? 'OK' : 'FAIL';
+    if (elStatus) {
+      elStatus.textContent = status;
+      elStatus.className = status === 'OK' ? 'badge badge-safe' : 'badge badge-fail';
+    }
+    
+    if (c.uplift > maxUplift) maxUplift = c.uplift;
+  });
+  
+  const elMaxUplift = document.getElementById('anc_max_uplift');
+  if (elMaxUplift) elMaxUplift.value = fmt(maxUplift, 1);
+  
+  // ── Counter balancing weights ──
+  const circumference_mm = Math.PI * bcd_mm;
+  const cb_design = -uplift1 / 1000;
+  const cb_operating = cb_design;
+  const cb_test = -uplift2 / 1000;
+  const cb_wind = -uplift3 / 1000;
+  const cb_pwind = -uplift6 / 1000;
+  const cb_seisole = uplift4 / 1000;
+  const cb_pseisole = uplift7 / 1000;
+  const cb_seiscle = uplift5 / 1000;
+  const cb_pseiscle = uplift8 / 1000;
+  
+  const cb_req_ole = Math.max(cb_seisole, cb_pseisole);
+  const cb_req_cle = Math.max(cb_seiscle, cb_pseiscle);
+  const uplift_unit_ole = cb_req_ole / circumference_mm;
+  const uplift_unit_cle = cb_req_cle / circumference_mm;
+  
+  // Set counter balancing values
+  const setEl = (id, val, decimals) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = fmt(val, decimals);
+  };
+  
+  setEl('anc_cb_des', cb_design, 3);
+  setEl('anc_cb_op', cb_operating, 3);
+  setEl('anc_cb_test', cb_test, 3);
+  setEl('anc_cb_wind', cb_wind, 3);
+  setEl('anc_cb_pwind', cb_pwind, 3);
+  setEl('anc_cb_seisole', cb_seisole, 3);
+  setEl('anc_cb_pseisole', cb_pseisole, 3);
+  setEl('anc_cb_req_ole', cb_req_ole, 3);
+  setEl('anc_uplift_unit_ole', uplift_unit_ole, 6);
+  setEl('anc_cb_seiscle', cb_seiscle, 3);
+  setEl('anc_cb_pseiscle', cb_pseiscle, 3);
+  setEl('anc_cb_req_cle', cb_req_cle, 3);
+  setEl('anc_uplift_unit_cle', uplift_unit_cle, 6);
+}
+
 
 // ─── PAGE 4: External Pressure (Perlite Insulation) ──────────────────────────
 function computeExtPressure() {
@@ -4931,6 +5460,7 @@ computeExtPressure();
 computeStiffeners();
 computeCapacity();
 computeWeightSummary();
+computeAnchor();
 computeTankGraphic();
 
 // ─── PREVENT LOCAL SAVE ATTEMPTS ──────────────────────────────────────────────
@@ -4959,6 +5489,244 @@ document.addEventListener('keydown', function(e) {
 
 console.log('%c⚠️ NOTICE: This software is ONLINE-ONLY', 'color: #ef4444; font-size: 16px; font-weight: bold;');
 console.log('%cThis application requires an active internet connection and cannot be saved locally.', 'color: #f59e0b; font-size: 12px;');
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WATERMARK PROTECTION SYSTEM - DEVELOPED BY: AY
+// ═══════════════════════════════════════════════════════════════════════════
+(function() {
+  'use strict';
+  
+  // Obfuscated watermark data
+  const _0x4a2b = ['RGV2ZWxvcGVkIGJ5OiBBWQ==', 'fixed', 'top', 'right', 'font-size', 'font-weight', 
+                  'color', 'z-index', 'pointer-events', 'user-select', 'opacity', 'div', 'body',
+                  'appendChild', 'MutationObserver', 'observe', 'attributes', 'childList', 'subtree',
+                  'disconnect', 'remove', 'style', 'textContent', 'getElementById', 'querySelector',
+                  'querySelectorAll', 'className', 'ay-watermark', 'ay-badge', 'ay-print-badge'];
+  
+  const _decode = s => atob(s);
+  const _wmText = _decode(_0x4a2b[0]); // "Developed by: AY"
+  
+  // Protect existing watermarks
+  const _protectExisting = () => {
+    const ayWatermark = document[_0x4a2b[23]]('.ay-watermark');
+    const ayBadge = document[_0x4a2b[23]]('.ay-badge');
+    const ayPrintBadge = document[_0x4a2b[23]]('.ay-print-badge');
+    
+    [ayWatermark, ayBadge, ayPrintBadge].forEach(el => {
+      if (el) {
+        // Make element immutable
+        Object.defineProperty(el, 'textContent', {
+          writable: false,
+          configurable: false,
+          value: el.textContent
+        });
+        Object.defineProperty(el, 'innerHTML', {
+          writable: false,
+          configurable: false,
+          value: el.innerHTML
+        });
+        
+        // Prevent class changes
+        Object.defineProperty(el, 'className', {
+          writable: false,
+          configurable: false,
+          value: el.className
+        });
+        
+        // Lock the element in DOM
+        Object.seal(el);
+        Object.freeze(el);
+      }
+    });
+  };
+  
+  // Multiple watermark instances for redundancy
+  const _createWM = (id, pos) => {
+    const wm = document.createElement(_0x4a2b[11]);
+    wm.id = id;
+    wm[_0x4a2b[22]] = _wmText;
+    wm[_0x4a2b[21]].cssText = `
+      position: ${_0x4a2b[1]};
+      ${pos.v}: ${pos.vVal};
+      ${pos.h}: ${pos.hVal};
+      ${_0x4a2b[4]}: 11px;
+      ${_0x4a2b[5]}: 600;
+      ${_0x4a2b[6]}: rgba(255,255,255,0.15);
+      ${_0x4a2b[7]}: 999999;
+      ${_0x4a2b[8]}: none;
+      ${_0x4a2b[9]}: none;
+      ${_0x4a2b[10]}: 0.7;
+      font-family: 'IBM Plex Sans', sans-serif;
+      letter-spacing: 0.3px;
+      text-shadow: 0 0 3px rgba(0,0,0,0.5);
+      padding: 4px 8px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 4px;
+      backdrop-filter: blur(2px);
+    `;
+    return wm;
+  };
+  
+  // Watermark positions - multiple instances
+  const positions = [
+    { id: 'wm-primary', v: _0x4a2b[2], vVal: '10px', h: _0x4a2b[3], hVal: '10px' },
+    { id: 'wm-backup1', v: 'bottom', vVal: '10px', h: _0x4a2b[3], hVal: '10px' },
+    { id: 'wm-backup2', v: _0x4a2b[2], vVal: '10px', h: 'left', hVal: '10px' },
+    { id: 'wm-backup3', v: 'bottom', vVal: '10px', h: 'left', hVal: '10px' }
+  ];
+  
+  const watermarks = new Map();
+  
+  // Initialize watermarks
+  const _init = () => {
+    positions.forEach(pos => {
+      const wm = _createWM(pos.id, pos);
+      document[_0x4a2b[12]][_0x4a2b[13]](wm);
+      watermarks.set(pos.id, { element: wm, text: _wmText, pos: pos });
+    });
+  };
+  
+  // Integrity check - verify watermark exists and is correct
+  const _check = () => {
+    watermarks.forEach((data, id) => {
+      const el = document[_0x4a2b[23]](id);
+      if (!el || el[_0x4a2b[22]] !== data.text || !document[_0x4a2b[12]].contains(el)) {
+        // Watermark tampered - restore it
+        const existing = document[_0x4a2b[23]](id);
+        if (existing) existing[_0x4a2b[20]]();
+        const newWM = _createWM(data.pos.id, data.pos);
+        document[_0x4a2b[12]][_0x4a2b[13]](newWM);
+        watermarks.set(id, { element: newWM, text: data.text, pos: data.pos });
+      }
+    });
+  };
+  
+  // DOM mutation observer - detect and prevent watermark removal/modification
+  const _observe = () => {
+    const observer = new window[_0x4a2b[14]]((mutations) => {
+      mutations.forEach(mutation => {
+        // Check if any watermark was removed
+        mutation.removedNodes.forEach(node => {
+          if (node.id && watermarks.has(node.id)) {
+            _check(); // Restore immediately
+          }
+        });
+        
+        // Check if watermark attributes/content were modified
+        if (mutation.type === _0x4a2b[16] || mutation.type === 'characterData') {
+          if (mutation.target.id && watermarks.has(mutation.target.id)) {
+            _check(); // Restore immediately
+          }
+        }
+      });
+    });
+    
+    observer[_0x4a2b[15]](document[_0x4a2b[12]], {
+      [_0x4a2b[16]]: true,
+      [_0x4a2b[17]]: true,
+      [_0x4a2b[18]]: true,
+      attributeOldValue: true,
+      characterData: true,
+      characterDataOldValue: true
+    });
+  };
+  
+  // Periodic integrity verification (every 500ms)
+  const _monitor = () => {
+    setInterval(_check, 500);
+  };
+  
+  // Prevent DevTools manipulation
+  const _protect = () => {
+    // Make watermark objects read-only
+    watermarks.forEach((data, id) => {
+      Object.freeze(data);
+    });
+    Object.freeze(watermarks);
+    
+    // Protect CSS - prevent modification of watermark styles
+    const sheets = document.styleSheets;
+    for (let i = 0; i < sheets.length; i++) {
+      try {
+        const rules = sheets[i].cssRules || sheets[i].rules;
+        for (let j = 0; j < rules.length; j++) {
+          const rule = rules[j];
+          if (rule.selectorText && (
+              rule.selectorText.includes('ay-watermark') ||
+              rule.selectorText.includes('ay-badge') ||
+              rule.selectorText.includes('ay-print-badge') ||
+              rule.selectorText.includes('body::before') ||
+              rule.selectorText.includes('body::after')
+          )) {
+            // Lock the rule
+            Object.freeze(rule);
+            if (rule.style) Object.freeze(rule.style);
+          }
+        }
+      } catch (e) {
+        // Cross-origin stylesheet - skip
+      }
+    }
+    
+    // Override console.clear to restore watermarks
+    const originalClear = console.clear;
+    console.clear = function() {
+      originalClear.apply(console, arguments);
+      _check();
+    };
+    
+    // Prevent style injection attacks
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(mutation => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach(node => {
+            if (node.tagName === 'STYLE' || node.tagName === 'LINK') {
+              // Check if trying to hide watermarks
+              try {
+                const text = node.textContent || '';
+                if (text.includes('ay-watermark') || text.includes('ay-badge') || 
+                    text.includes('display:none') || text.includes('display: none')) {
+                  node.remove();
+                  _check();
+                }
+              } catch (e) {}
+            }
+          });
+        }
+      });
+    });
+    observer.observe(document.head, { childList: true, subtree: true });
+  };
+  
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      _protectExisting();
+      _init();
+      _observe();
+      _monitor();
+      _protect();
+    });
+  } else {
+    _protectExisting();
+    _init();
+    _observe();
+    _monitor();
+    _protect();
+  }
+  
+  // Additional check on window focus (when user returns to tab)
+  window.addEventListener('focus', _check);
+  
+  // Check on any user interaction
+  ['click', 'keydown', 'scroll'].forEach(event => {
+    document.addEventListener(event, () => {
+      if (Math.random() < 0.1) _check(); // Random checks to avoid pattern detection
+    }, { passive: true });
+  });
+  
+})();
+
 </script>
 </body>
 </html>
