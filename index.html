@@ -628,7 +628,325 @@
   </div>
 
   <div class="section">
-    <div class="section-header"><div class="section-num">2</div><h2>3.2 Computed Seismic Parameters</h2></div>
+    
+  <!-- 3.1A Spectra Data and Time Periods -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">1A</div><h2>3.1A Response Spectra and Time Periods (from Tab 8_Spectra)</h2></div>
+    <div class="section-body">
+      <div class="info-banner" style="margin-bottom:14px">
+        ⏱️ Time periods (Ti and Tc) and corresponding accelerations from response spectra analysis. Values can be auto-calculated or user-input.
+      </div>
+      
+      <!-- Time Periods -->
+      <h3 style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Time Periods</h3>
+      <div class="grid-4" style="margin-bottom:20px">
+        <div class="field">
+          <label>Time Period for Impulsive Mode (Ti)</label>
+          <input id="s_Ti_calc" type="text" readonly value="0.304748"/>
+          <span class="unit">sec</span>
+        </div>
+        <div class="field">
+          <label>Time Period for Convective Mode (Tc)</label>
+          <input id="s_Tc_calc" type="text" readonly value="7.356909"/>
+          <span class="unit">sec</span>
+        </div>
+      
+      <div class="divider"></div>
+
+      <!-- Adjustment Factors -->
+      <h3 style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Adjustment Factors (For Damping Conversion & I/R or q Behavioral Factor)</h3>
+      <div class="info-banner" style="margin-bottom:14px">
+        These factors adjust accelerations for damping conversion and structural behavior (I/R or q factors)
+      </div>
+      <div class="grid-4" style="margin-bottom:20px">
+        <div class="field">
+          <label>Adjustment Factor for Impulsive Mode (OBE/OLE)</label>
+          <input id="s_adj_impulsive_OLE" type="number" step="0.01" value="1.4" oninput="updateAdjustedAccelerations()"/>
+          <span class="unit">—</span>
+        </div>
+        <div class="field">
+          <label>Adjustment Factor for Impulsive Mode (SSE/CLE)</label>
+          <input id="s_adj_impulsive_CLE" type="number" step="0.01" value="1.0" oninput="updateAdjustedAccelerations()"/>
+          <span class="unit">—</span>
+        </div>
+        <div class="field">
+          <label>Adjustment Factor for Convective Mode</label>
+          <input id="s_adj_convective" type="number" step="0.01" value="1.9" oninput="updateAdjustedAccelerations()"/>
+          <span class="unit">—</span>
+        </div>
+      </div>
+</div>
+
+      <div class="divider"></div>
+
+      <!-- Spectra Accelerations - from Excel -->
+      <h3 style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Response Spectra Accelerations (from 8_Spectra)</h3>
+      <div class="grid-4" style="margin-bottom:14px">
+        <div class="field">
+          <label>Horizontal Accel. at Ti (OBE/OLE)</label>
+          <input id="s_Ai_Ti_OLE_spectra" type="text" readonly value="0.375"/>
+          <span class="unit">g (from spectra)</span>
+        </div>
+        <div class="field">
+          <label>Horizontal Accel. at Ti (SSE/CLE)</label>
+          <input id="s_Ai_Ti_CLE_spectra" type="text" readonly value="0.625"/>
+          <span class="unit">g (from spectra)</span>
+        </div>
+        <div class="field">
+          <label>Horizontal Accel. at Tc (OBE/OLE)</label>
+          <input id="s_Ac_Tc_OLE_spectra" type="text" readonly value="0.033431"/>
+          <span class="unit">g (from spectra)</span>
+        </div>
+        <div class="field">
+          <label>Horizontal Accel. at Tc (SSE/CLE)</label>
+          <input id="s_Ac_Tc_CLE_spectra" type="text" readonly value="0.055289"/>
+          <span class="unit">g (from spectra)</span>
+        </div>
+      </div>
+
+      <!-- Final Adjusted Accelerations (Auto-calculated) -->
+      <h3 style="font-size:13px;font-weight:600;color:var(--accent2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Final Adjusted Accelerations (Auto-calculated with Adjustment Factors)</h3>
+      <div class="info-banner" style="margin-bottom:14px;background:#dcfce7;border-left:3px solid #22c55e">
+        ✓ These values are automatically calculated: Spectra Acceleration × Adjustment Factor
+      </div>
+      <div class="grid-4" style="margin-bottom:14px">
+        <div class="field">
+          <label>Final Horizontal Accel. at Ti (OBE/OLE)</label>
+          <input id="s_Ai_Ti_OLE_final" type="text" readonly value="0.525"/>
+          <span class="unit">g (auto-calculated)</span>
+        </div>
+        <div class="field">
+          <label>Final Horizontal Accel. at Ti (SSE/CLE)</label>
+          <input id="s_Ai_Ti_CLE_final" type="text" readonly value="0.625"/>
+          <span class="unit">g (auto-calculated)</span>
+        </div>
+        <div class="field">
+          <label>Final Horizontal Accel. at Tc (OBE/OLE)</label>
+          <input id="s_Ac_Tc_OLE_final" type="text" readonly value="0.063519"/>
+          <span class="unit">g (auto-calculated)</span>
+        </div>
+        <div class="field">
+          <label>Final Horizontal Accel. at Tc (SSE/CLE)</label>
+          <input id="s_Ac_Tc_CLE_final" type="text" readonly value="0.105050"/>
+          <span class="unit">g (auto-calculated)</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+                  <!-- Full Spectra Table -->
+      <h3 style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Complete Response Spectra Table (5% Damping)</h3>
+      <div style="overflow-x:auto">
+        <table class="result-table" id="spectraInputTable">
+          <thead>
+            <tr>
+              <th>Period (sec)</th>
+              <th>OBE/OLE Horizontal (g)</th>
+              <th>SSE/CLE Horizontal (g)</th>
+            </tr>
+          </thead>
+          <tbody id="spectraTableBody">
+            <tr>
+              <td><input type="number" step="0.001" value="0" id="spectra_period_0" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.15" id="spectra_obe_h_0" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.25" id="spectra_sse_h_0" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="0.01" id="spectra_period_1" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.15" id="spectra_obe_h_1" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.25" id="spectra_sse_h_1" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="0.05" id="spectra_period_2" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.25" id="spectra_obe_h_2" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.417" id="spectra_sse_h_2" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="0.1" id="spectra_period_3" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.375" id="spectra_obe_h_3" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.625" id="spectra_sse_h_3" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="0.275" id="spectra_period_4" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.375" id="spectra_obe_h_4" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.625" id="spectra_sse_h_4" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="0.45" id="spectra_period_5" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.375" id="spectra_obe_h_5" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.625" id="spectra_sse_h_5" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="0.625" id="spectra_period_6" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.375" id="spectra_obe_h_6" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.625" id="spectra_sse_h_6" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="0.8" id="spectra_period_7" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.375" id="spectra_obe_h_7" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.625" id="spectra_sse_h_7" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="1.06" id="spectra_period_8" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.283" id="spectra_obe_h_8" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.472" id="spectra_sse_h_8" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="1.32" id="spectra_period_9" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.227" id="spectra_obe_h_9" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.379" id="spectra_sse_h_9" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="1.58" id="spectra_period_10" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.19" id="spectra_obe_h_10" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.316" id="spectra_sse_h_10" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="1.84" id="spectra_period_11" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.163" id="spectra_obe_h_11" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.272" id="spectra_sse_h_11" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="2.1" id="spectra_period_12" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.143" id="spectra_obe_h_12" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.238" id="spectra_sse_h_12" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="2.36" id="spectra_period_13" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.127" id="spectra_obe_h_13" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.212" id="spectra_sse_h_13" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="2.62" id="spectra_period_14" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.115" id="spectra_obe_h_14" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.191" id="spectra_sse_h_14" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="2.88" id="spectra_period_15" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.104" id="spectra_obe_h_15" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.174" id="spectra_sse_h_15" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="3.14" id="spectra_period_16" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.096" id="spectra_obe_h_16" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.159" id="spectra_sse_h_16" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="3.4" id="spectra_period_17" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.088" id="spectra_obe_h_17" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.147" id="spectra_sse_h_17" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="3.66" id="spectra_period_18" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.082" id="spectra_obe_h_18" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.137" id="spectra_sse_h_18" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="3.92" id="spectra_period_19" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.077" id="spectra_obe_h_19" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.128" id="spectra_sse_h_19" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="4.18" id="spectra_period_20" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.072" id="spectra_obe_h_20" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.12" id="spectra_sse_h_20" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="4.44" id="spectra_period_21" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.068" id="spectra_obe_h_21" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.113" id="spectra_sse_h_21" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="4.7" id="spectra_period_22" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.064" id="spectra_obe_h_22" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.106" id="spectra_sse_h_22" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="4.96" id="spectra_period_23" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.06" id="spectra_obe_h_23" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.101" id="spectra_sse_h_23" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="5.22" id="spectra_period_24" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.057" id="spectra_obe_h_24" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.096" id="spectra_sse_h_24" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="5.48" id="spectra_period_25" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.055" id="spectra_obe_h_25" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.091" id="spectra_sse_h_25" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="5.74" id="spectra_period_26" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.052" id="spectra_obe_h_26" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.087" id="spectra_sse_h_26" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="6" id="spectra_period_27" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.05" id="spectra_obe_h_27" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.083" id="spectra_sse_h_27" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="6.5" id="spectra_period_28" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.043" id="spectra_obe_h_28" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.071" id="spectra_sse_h_28" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="7" id="spectra_period_29" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.037" id="spectra_obe_h_29" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.061" id="spectra_sse_h_29" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="7.5" id="spectra_period_30" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.032" id="spectra_obe_h_30" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.053" id="spectra_sse_h_30" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="8" id="spectra_period_31" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.028" id="spectra_obe_h_31" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.047" id="spectra_sse_h_31" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="8.5" id="spectra_period_32" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.025" id="spectra_obe_h_32" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.042" id="spectra_sse_h_32" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="9" id="spectra_period_33" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.022" id="spectra_obe_h_33" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.037" id="spectra_sse_h_33" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="9.5" id="spectra_period_34" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.02" id="spectra_obe_h_34" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.033" id="spectra_sse_h_34" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="10" id="spectra_period_35" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.018" id="spectra_obe_h_35" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.03" id="spectra_sse_h_35" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="10.5" id="spectra_period_36" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.016" id="spectra_obe_h_36" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.027" id="spectra_sse_h_36" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+            <tr>
+              <td><input type="number" step="0.001" value="11" id="spectra_period_37" style="width:80px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.015" id="spectra_obe_h_37" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+              <td><input type="number" step="0.001" value="0.025" id="spectra_sse_h_37" style="width:100px;background:var(--input-bg);border:1px solid var(--input-border);border-left:3px solid var(--input-clr);border-radius:5px;padding:5px 8px;color:var(--input-clr);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;" oninput="updateSpectraCalculations()"/></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px">
+        <button onclick="resetSpectraToDefaults()" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500">
+          🔄 Reset to Default Values
+        </button>
+      </div>
+    </div>
+  </div>
+<div class="section-header"><div class="section-num">2</div><h2>3.2 Computed Seismic Parameters</h2></div>
     <div class="section-body">
       <div class="kpi-row" id="kpiRow"></div>
       <table class="result-table">
@@ -3136,6 +3454,197 @@ function computeThickness() {
   if (document.getElementById('page8') && document.getElementById('page8').classList.contains('active')) { computeTankGraphic(); }
 }
 
+
+
+
+// Function to update adjusted accelerations based on adjustment factors
+// ============================================================================
+// RESPONSE SPECTRA INTERPOLATION AND DYNAMIC CALCULATION
+// ============================================================================
+
+/**
+ * Linear interpolation between two points
+ */
+function linearInterpolate(x1, y1, x2, y2, x) {
+  if (x2 === x1) return y1; // Avoid division by zero
+  return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+}
+
+/**
+ * Get spectra acceleration value for a given time period using linear interpolation
+ * @param {number} period - Time period (Ti or Tc)
+ * @param {string} column - Column identifier: 'obe_h', 'obe_v', 'sse_h', 'sse_v'
+ * @returns {number} - Interpolated acceleration value
+ */
+function getSpectraAcceleration(period, column) {
+  // Read all spectra data from the table
+  const spectraData = [];
+  let i = 0;
+  while (true) {
+    const periodInput = document.getElementById(`spectra_period_${i}`);
+    const columnInput = document.getElementById(`spectra_${column}_${i}`);
+    
+    if (!periodInput || !columnInput) break;
+    
+    const p = parseFloat(periodInput.value);
+    const v = parseFloat(columnInput.value);
+    
+    if (!isNaN(p) && !isNaN(v)) {
+      spectraData.push({ period: p, value: v });
+    }
+    i++;
+  }
+  
+  if (spectraData.length === 0) return 0;
+  
+  // Sort by period
+  spectraData.sort((a, b) => a.period - b.period);
+  
+  // Handle edge cases
+  if (period <= spectraData[0].period) {
+    return spectraData[0].value;
+  }
+  if (period >= spectraData[spectraData.length - 1].period) {
+    return spectraData[spectraData.length - 1].value;
+  }
+  
+  // Find the two points to interpolate between
+  for (let i = 0; i < spectraData.length - 1; i++) {
+    if (period >= spectraData[i].period && period <= spectraData[i + 1].period) {
+      return linearInterpolate(
+        spectraData[i].period,
+        spectraData[i].value,
+        spectraData[i + 1].period,
+        spectraData[i + 1].value,
+        period
+      );
+    }
+  }
+  
+  return 0;
+}
+
+/**
+ * Update spectra-based acceleration values based on Ti and Tc
+ * This function performs interpolation from the 8_Spectra table
+ */
+function updateSpectraValues() {
+  // Get calculated time periods
+  const Ti = parseFloat(document.getElementById('s_Ti_calc')?.value) || 0.304748;
+  const Tc = parseFloat(document.getElementById('s_Tc_calc')?.value) || 7.356909;
+  
+  // Get interpolated values from spectra table
+  const Ai_Ti_OLE_spectra = getSpectraAcceleration(Ti, 'obe_h');
+  const Ai_Ti_CLE_spectra = getSpectraAcceleration(Ti, 'sse_h');
+  const Ac_Tc_OLE_spectra = getSpectraAcceleration(Tc, 'obe_h');
+  const Ac_Tc_CLE_spectra = getSpectraAcceleration(Tc, 'sse_h');
+  
+  // Update the response spectra acceleration display fields
+  const obeH_Ti = document.getElementById('s_Ai_Ti_OLE_spectra');
+  const cle_Ti = document.getElementById('s_Ai_Ti_CLE_spectra');
+  const obe_Tc = document.getElementById('s_Ac_Tc_OLE_spectra');
+  const cle_Tc = document.getElementById('s_Ac_Tc_CLE_spectra');
+  
+  if (obeH_Ti) obeH_Ti.value = Ai_Ti_OLE_spectra.toFixed(6);
+  if (cle_Ti) cle_Ti.value = Ai_Ti_CLE_spectra.toFixed(6);
+  if (obe_Tc) obe_Tc.value = Ac_Tc_OLE_spectra.toFixed(6);
+  if (cle_Tc) cle_Tc.value = Ac_Tc_CLE_spectra.toFixed(6);
+  
+  // Trigger adjusted accelerations update
+  updateAdjustedAccelerations();
+}
+
+/**
+ * Update calculations when any spectra table input changes
+ */
+function updateSpectraCalculations() {
+  // Update spectra values based on current Ti and Tc
+  updateSpectraValues();
+  
+  // Trigger seismic recalculation
+  if (typeof computeSeismic === 'function') {
+    computeSeismic();
+  }
+}
+
+/**
+ * Enhanced updateAdjustedAccelerations with dynamic spectra lookup
+ */
+function updateAdjustedAccelerations() {
+  // Get adjustment factors
+  const adjImpOLE = parseFloat(document.getElementById('s_adj_impulsive_OLE')?.value) || 1.4;
+  const adjImpCLE = parseFloat(document.getElementById('s_adj_impulsive_CLE')?.value) || 1.0;
+  const adjConv = parseFloat(document.getElementById('s_adj_convective')?.value) || 1.9;
+  
+  // Get spectra accelerations (which are now dynamically calculated via interpolation)
+  const AiTiOLE = parseFloat(document.getElementById('s_Ai_Ti_OLE_spectra')?.value) || 0.375;
+  const AiTiCLE = parseFloat(document.getElementById('s_Ai_Ti_CLE_spectra')?.value) || 0.625;
+  const AcTcOLE = parseFloat(document.getElementById('s_Ac_Tc_OLE_spectra')?.value) || 0.033431;
+  const AcTcCLE = parseFloat(document.getElementById('s_Ac_Tc_CLE_spectra')?.value) || 0.055289;
+  
+  // Calculate final adjusted values
+  const finalAiTiOLE = AiTiOLE * adjImpOLE;
+  const finalAiTiCLE = AiTiCLE * adjImpCLE;
+  const finalAcTcOLE = AcTcOLE * adjConv;
+  const finalAcTcCLE = AcTcCLE * adjConv;
+  
+  // Update display fields
+  if (document.getElementById('s_Ai_Ti_OLE_final')) {
+    document.getElementById('s_Ai_Ti_OLE_final').value = finalAiTiOLE.toFixed(6);
+  }
+  if (document.getElementById('s_Ai_Ti_CLE_final')) {
+    document.getElementById('s_Ai_Ti_CLE_final').value = finalAiTiCLE.toFixed(6);
+  }
+  if (document.getElementById('s_Ac_Tc_OLE_final')) {
+    document.getElementById('s_Ac_Tc_OLE_final').value = finalAcTcOLE.toFixed(6);
+  }
+  if (document.getElementById('s_Ac_Tc_CLE_final')) {
+    document.getElementById('s_Ac_Tc_CLE_final').value = finalAcTcCLE.toFixed(6);
+  }
+  
+  // Store in window for use in computeSeismic
+  window.spectraData = {
+    Ti: parseFloat(document.getElementById('s_Ti_calc')?.value) || 0.304748,
+    Tc: parseFloat(document.getElementById('s_Tc_calc')?.value) || 7.356909,
+    Ai_Ti_OLE: finalAiTiOLE,
+    Ai_Ti_CLE: finalAiTiCLE,
+    Ac_Tc_OLE: finalAcTcOLE,
+    Ac_Tc_CLE: finalAcTcCLE
+  };
+  
+  // Trigger seismic recalculation
+  if (typeof computeSeismic === 'function') {
+    computeSeismic();
+  }
+}
+
+// Initialize on page load
+window.addEventListener('DOMContentLoaded', function() {
+  updateSpectraValues(); // This will trigger updateAdjustedAccelerations
+});
+
+// Function to reset spectra table to default values
+function resetSpectraToDefaults() {
+  const defaultSpectra = [{"period": 0, "obe_h": 0.15, "obe_v": 0.09999999999999999, "sse_h": 0.25, "sse_v": 0.16666666666666666}, {"period": 0.01, "obe_h": 0.15, "obe_v": 0.09999999999999999, "sse_h": 0.25, "sse_v": 0.16666666666666666}, {"period": 0.05, "obe_h": 0.25, "obe_v": 0.16666666666666666, "sse_h": 0.417, "sse_v": 0.27799999999999997}, {"period": 0.1, "obe_h": 0.375, "obe_v": 0.25, "sse_h": 0.625, "sse_v": 0.4166666666666667}, {"period": 0.275, "obe_h": 0.375, "obe_v": 0.25, "sse_h": 0.625, "sse_v": 0.4166666666666667}, {"period": 0.45, "obe_h": 0.375, "obe_v": 0.25, "sse_h": 0.625, "sse_v": 0.4166666666666667}, {"period": 0.625, "obe_h": 0.375, "obe_v": 0.25, "sse_h": 0.625, "sse_v": 0.4166666666666667}, {"period": 0.8, "obe_h": 0.375, "obe_v": 0.25, "sse_h": 0.625, "sse_v": 0.4166666666666667}, {"period": 1.06, "obe_h": 0.283, "obe_v": 0.18866666666666665, "sse_h": 0.472, "sse_v": 0.31466666666666665}, {"period": 1.32, "obe_h": 0.227, "obe_v": 0.15133333333333335, "sse_h": 0.379, "sse_v": 0.25266666666666665}, {"period": 1.58, "obe_h": 0.19, "obe_v": 0.12666666666666668, "sse_h": 0.316, "sse_v": 0.21066666666666667}, {"period": 1.84, "obe_h": 0.163, "obe_v": 0.10866666666666668, "sse_h": 0.272, "sse_v": 0.18133333333333335}, {"period": 2.1, "obe_h": 0.143, "obe_v": 0.09533333333333333, "sse_h": 0.238, "sse_v": 0.15866666666666665}, {"period": 2.36, "obe_h": 0.127, "obe_v": 0.08466666666666667, "sse_h": 0.212, "sse_v": 0.14133333333333334}, {"period": 2.62, "obe_h": 0.115, "obe_v": 0.07666666666666667, "sse_h": 0.191, "sse_v": 0.12733333333333333}, {"period": 2.88, "obe_h": 0.104, "obe_v": 0.06933333333333333, "sse_h": 0.174, "sse_v": 0.11599999999999999}, {"period": 3.14, "obe_h": 0.096, "obe_v": 0.064, "sse_h": 0.159, "sse_v": 0.106}, {"period": 3.4, "obe_h": 0.088, "obe_v": 0.058666666666666666, "sse_h": 0.147, "sse_v": 0.09799999999999999}, {"period": 3.66, "obe_h": 0.082, "obe_v": 0.05466666666666667, "sse_h": 0.137, "sse_v": 0.09133333333333334}, {"period": 3.92, "obe_h": 0.077, "obe_v": 0.051333333333333335, "sse_h": 0.128, "sse_v": 0.08533333333333333}, {"period": 4.18, "obe_h": 0.072, "obe_v": 0.047999999999999994, "sse_h": 0.12, "sse_v": 0.08}, {"period": 4.44, "obe_h": 0.068, "obe_v": 0.04533333333333334, "sse_h": 0.113, "sse_v": 0.07533333333333334}, {"period": 4.7, "obe_h": 0.064, "obe_v": 0.042666666666666665, "sse_h": 0.106, "sse_v": 0.07066666666666667}, {"period": 4.96, "obe_h": 0.06, "obe_v": 0.04, "sse_h": 0.101, "sse_v": 0.06733333333333334}, {"period": 5.22, "obe_h": 0.057, "obe_v": 0.038, "sse_h": 0.096, "sse_v": 0.064}, {"period": 5.48, "obe_h": 0.055, "obe_v": 0.03666666666666667, "sse_h": 0.091, "sse_v": 0.06066666666666667}, {"period": 5.74, "obe_h": 0.052, "obe_v": 0.034666666666666665, "sse_h": 0.087, "sse_v": 0.057999999999999996}, {"period": 6, "obe_h": 0.05, "obe_v": 0.03333333333333333, "sse_h": 0.083, "sse_v": 0.05533333333333334}, {"period": 6.5, "obe_h": 0.043, "obe_v": 0.028666666666666663, "sse_h": 0.071, "sse_v": 0.04733333333333333}, {"period": 7, "obe_h": 0.037, "obe_v": 0.024666666666666667, "sse_h": 0.061, "sse_v": 0.04066666666666666}, {"period": 7.5, "obe_h": 0.032, "obe_v": 0.021333333333333333, "sse_h": 0.053, "sse_v": 0.035333333333333335}, {"period": 8, "obe_h": 0.028, "obe_v": 0.018666666666666668, "sse_h": 0.047, "sse_v": 0.03133333333333333}, {"period": 8.5, "obe_h": 0.025, "obe_v": 0.016666666666666666, "sse_h": 0.042, "sse_v": 0.028}, {"period": 9, "obe_h": 0.022, "obe_v": 0.014666666666666666, "sse_h": 0.037, "sse_v": 0.024666666666666667}, {"period": 9.5, "obe_h": 0.02, "obe_v": 0.013333333333333334, "sse_h": 0.033, "sse_v": 0.022000000000000002}, {"period": 10, "obe_h": 0.018, "obe_v": 0.011999999999999999, "sse_h": 0.03, "sse_v": 0.02}, {"period": 10.5, "obe_h": 0.016, "obe_v": 0.010666666666666666, "sse_h": 0.027, "sse_v": 0.018}, {"period": 11, "obe_h": 0.015, "obe_v": 0.01, "sse_h": 0.025, "sse_v": 0.016666666666666666}];
+  
+  defaultSpectra.forEach((row, i) => {
+    const periodInput = document.getElementById(`spectra_period_${i}`);
+    const obeHInput = document.getElementById(`spectra_obe_h_${i}`);
+    const obeVInput = document.getElementById(`spectra_obe_v_${i}`);
+    const sseHInput = document.getElementById(`spectra_sse_h_${i}`);
+    const sseVInput = document.getElementById(`spectra_sse_v_${i}`);
+    
+    if (periodInput) periodInput.value = row.period;
+    if (obeHInput) obeHInput.value = row.obe_h.toFixed(6);
+    if (obeVInput) obeVInput.value = row.obe_v.toFixed(6);
+    if (sseHInput) sseHInput.value = row.sse_h.toFixed(6);
+    if (sseVInput) sseVInput.value = row.sse_v.toFixed(6);
+  });
+  
+  updateSpectraCalculations();
+  alert('Spectra values reset to defaults!');
+}
+
 // ─── PAGE 3: Seismic Analysis ────────────────────────────────────────────────
 function computeSeismic() {
   const D   = g('D_mm') / 1000;
@@ -3183,9 +3692,21 @@ function computeSeismic() {
   setRO('s_Wp_calc', Wp_calc);
   setRO('s_Wf_calc', Wf_calc_direct);
 
-  // Time periods
-  const Ti = (Math.sqrt(D * rho) / Math.sqrt(2000 * tU * E)) * Ci * Hd;
-  const Tc = (0.578 / Math.sqrt(Math.tanh(3.68 * Hd / D))) * 1.8 * Math.sqrt(D);
+  // Time periods - use spectraData if available, otherwise calculate
+  let Ti, Tc;
+  if (window.spectraData) {
+    Ti = window.spectraData.Ti;
+    Tc = window.spectraData.Tc;
+  } else {
+    Ti = (Math.sqrt(D * rho) / Math.sqrt(2000 * tU * E)) * Ci * Hd;
+    Tc = (0.578 / Math.sqrt(Math.tanh(3.68 * Hd / D))) * 1.8 * Math.sqrt(D);
+  }
+  
+  // Update the calculated display fields
+  const tiCalc = (Math.sqrt(D * rho) / Math.sqrt(2000 * tU * E)) * Ci * Hd;
+  const tcCalc = (0.578 / Math.sqrt(Math.tanh(3.68 * Hd / D))) * 1.8 * Math.sqrt(D);
+  if (document.getElementById('s_Ti_calc')) document.getElementById('s_Ti_calc').value = tiCalc.toFixed(6);
+  if (document.getElementById('s_Tc_calc')) document.getElementById('s_Tc_calc').value = tcCalc.toFixed(6);
 
   // D/H ratio
   const DH = D / Hd;
